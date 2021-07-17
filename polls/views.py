@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views import generic
 
 from .models import Question, Choice
@@ -14,7 +15,7 @@ class IndexView(generic.ListView):
     context_object_name = 'latest_question_list'
 
     def get_queryset(self):
-        queryset = Question.objects.all()
+        queryset = Question.objects.filter(pub_date__lte=timezone.now())
         if 'query' in self.request.GET and self.request.GET['query']:
             queryset = queryset.filter(question_text__icontains=self.request.GET['query'])
         """Return the last five published questions."""
