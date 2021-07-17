@@ -1,3 +1,11 @@
+<form action="{% url 'polls:index' %}" method="get">
+<fieldset>
+    <input type="text" name="query" id="query">
+    <label for="query">Search</label><br>
+</fieldset>
+<input type="submit">
+</form>
+
 {% if latest_question_list %}
     <ul>
     {% for question in latest_question_list %}

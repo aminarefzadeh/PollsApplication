@@ -11,7 +11,10 @@ from django.http import Http404
 
 
 def index(request):
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
+    queryset = Question.objects.all()
+    if 'query' in request.GET and request.GET['query']:
+        queryset = queryset.filter(question_text__icontains=request.GET['query'])
+    latest_question_list = queryset.order_by('-pub_date')[:5]
     template = loader.get_template('index.template')
     context = {
         'latest_question_list': latest_question_list,
