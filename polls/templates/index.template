@@ -1,3 +1,8 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+<link rel="icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
+<link rel="shortcut icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
+
 <form action="{% url 'polls:index' %}" method="get">
 <fieldset>
     <input type="text" name="query" id="query">
