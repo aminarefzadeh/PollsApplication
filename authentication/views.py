@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
@@ -20,3 +20,8 @@ def login_user(request):
             return HttpResponseRedirect(reverse('polls:index'))
         else:
             return HttpResponseRedirect(reverse('auth:login'))
+
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('auth:login'))

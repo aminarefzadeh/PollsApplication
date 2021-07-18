@@ -2,7 +2,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
 <link rel="icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
 <link rel="shortcut icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
-
+<h3>hello {{ request.user.username }}</h3>
+<a href="{% url 'auth:logout' %}">Logout</a>
 <form action="{% url 'polls:vote' question.id %}" method="post">
 {% csrf_token %}
 <fieldset>
