@@ -1,13 +1,11 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator, RegexValidator
 
 
-class UserForm(forms.Form):
-    username = forms.CharField(label='Enter your username:', max_length=100)
-    first_name = forms.CharField(label='Enter your first name:', max_length=100)
-    last_name = forms.CharField(label='Enter your last_name:', max_length=100)
+class UserForm(forms.ModelForm):
     password = forms.CharField(
-        label='Enter your password:',
+        label='Password:',
         max_length=100,
         widget=forms.PasswordInput(),
         validators=[
@@ -17,4 +15,13 @@ class UserForm(forms.Form):
         ]
     )
 
-    email = forms.EmailField(label='Enter your email:')
+    class Meta:
+        fields = ['username', 'first_name', 'last_name', 'email']
+        model = User
+
+    def save(self, commit=True):
+        user = super(UserForm, self).save(commit=False)
+        user.set_password(self.cleaned_data.get('password'))
+        if commit:
+            user.save()
+        return user

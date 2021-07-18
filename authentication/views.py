@@ -41,16 +41,5 @@ def register(request):
         if not form.is_valid():
             print(form.errors)
             return HttpResponse(render(request, 'register.template', context={'form': form}))
-        try:
-            user = User.objects.create(
-                username=form.cleaned_data.get('username'),
-                email=form.cleaned_data.get('email'),
-                first_name=form.cleaned_data.get('first_name'),
-                last_name=form.cleaned_data.get('last_name')
-            )
-            user.set_password(form.cleaned_data.get('password'))
-            user.save()
-        except Exception as e:
-            print(e)
-            return HttpResponseRedirect(reverse('auth:register'))
+        form.save()
         return HttpResponseRedirect(reverse('auth:login'))
