@@ -1,0 +1,17 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}">
+<link rel="icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
+<link rel="shortcut icon" href="{% static 'polls/favicon.svg' %}" type="image/x-icon"/>
+
+<form action="{% url 'auth:login' %}" method="post">
+{% csrf_token %}
+<fieldset>
+    <legend><h1>Login</h1></legend>
+    <label for="username">Enter your username: </label>
+    <input type="text" name="username" id="username"><br>
+
+    <label for="password">Enter your password: </label>
+    <input type="password" name="password" id="password"><br>
+</fieldset>
+<input type="submit" value="Login">
+</form>
