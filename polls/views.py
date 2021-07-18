@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 
 # Create your views here.
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic
@@ -40,17 +40,19 @@ class ResultsView(generic.DetailView):
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
+    if question_id in request.session.get('voted_ids', []):
+        return HttpResponse('You voted before', status=400)
     try:
         selected_choice = question.choice_set.get(pk=request.POST['choice'])
     except (KeyError, Choice.DoesNotExist):
         # Redisplay the question voting form.
-        return render(request, 'polls/detail.html', {
-            'question': question,
-            'error_message': "You didn't select a choice.",
-        })
+        return HttpResponse('Invalid choice', status=400)
     else:
         selected_choice.votes += 1
         selected_choice.save()
+        voted_ids = request.session.get('voted_ids') or []
+        voted_ids.append(question_id)
+        request.session['voted_ids'] = voted_ids
         # Always return an HttpResponseRedirect after successfully dealing
         # with POST data. This prevents data from being posted twice if a
         # user hits the Back button.
