@@ -1,12 +1,13 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.views.generic import CreateView
+from authentication.forms import UserForm
 
 # Create your views here.
 from django.urls import reverse
-
-from authentication.forms import UserForm
 
 
 def login_user(request):
@@ -32,14 +33,8 @@ def logout_user(request):
     return HttpResponseRedirect(reverse('auth:login'))
 
 
-def register(request):
-    if request.method == 'GET':
-        form = UserForm()
-        return HttpResponse(render(request, 'register.template', context={'form': form}))
-    if request.method == 'POST':
-        form = UserForm(data=request.POST)
-        if not form.is_valid():
-            print(form.errors)
-            return HttpResponse(render(request, 'register.template', context={'form': form}))
-        form.save()
-        return HttpResponseRedirect(reverse('auth:login'))
+class Register(CreateView):
+    model = User
+    form_class = UserForm
+    template_name = 'register.template'
+    success_url = settings.LOGIN_URL
