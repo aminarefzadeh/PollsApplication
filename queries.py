@@ -39,7 +39,7 @@ for post in query_set:
     print(post.title)
 
 post = query_set[0]
-post = query_set[-1]
+post = query_set[-1]       #exception
 
 len(query_set)
 
@@ -58,6 +58,9 @@ query_set = Post.objects.filter(number_of_comments=0)
 query_set = query_set.filter(number_of_likes=0)
 
 query_set = Post.objects.filter(number_of_comments=0).exclude(number_of_likes=0)
+
+
+# tamrin
 
 # gt, gte, lt, lte
 query_set = Post.objects.filter(number_of_likes__gte=50)
@@ -78,6 +81,21 @@ Post.objects.filter(title__endswith='?')
 # in
 Post.objects.filter(pub_date__month__in=[6, 10])
 
+
+# tamrin:
+# تابعی بنویسید که یک string ورودی بگیره و پست هایی رو برگردونه که مال حداکثر ۱ ماه پیش هستند و اون string رو داخل تایتل شون دارن
+# پست هایی امروز رو پیدا کنید که تعداد لایک هاشون بیشتر از ۱۰ تا باشه
+# تایتل های پست هایی که امروز پابلیش شدن رو پرینت کنید.
+# تعداد پست هایی که تایتلشون با ? تموم شده و تعداد کامنت هاشون بین ۵۰ و ۱۰۰ هست رو پیدا کنید
+# پستهایی که تعداد کامنتشون زیر ۱۰۰ و تعداد لایک شون بالای ۵۰ هست رو فقط با استفاده از exclude پیدا کنید
+# javab:  Post.objects.exclude(number_of_comments__gte=100).exclude(number_of_likes__lte=50)
+# تمام پستهایی رو پیدا کنید که تعداد کامنت هاشون زیر ۱۰۰ عه یا تعداد لایک هاشون بالای ۵۰ عه
+# javab: Post.objects.exclude(number_of_comments__gte=100, number_of_likes__lte=50)
+# توضیح بدیم در مورد این دو تا سوال بالا
+# یدونه پست پیدا کنید که هم داخل دیسکریپشن و هم داخل تایتلش ؟ باشه
+# یه تابع بنویسید با ۳ تا ورودی بولین. new و question و hot. نیو پست های ۱ ماه اخیر میشه. question پست هایی که توی تایتلشون ؟ باشه و هات پست هایی که تعداد لایک هاشون بیشتر از ۵۰ باشه
+
+
 # order_by
 Post.objects.exclude(number_of_comments=0).order_by('number_of_likes')
 Post.objects.exclude(number_of_comments=0).order_by('-number_of_likes')
@@ -92,6 +110,11 @@ Post.objects.order_by('-number_of_likes')[:5]   # limit 5
 Post.objects.order_by('-number_of_likes')[5:10]   # offset 5 limit 5
 
 
+# tamrin:
+# آیدی ۵ تا از پر کامنت ترین پست های امروز رو پیدا کنید.
+# پستی که از همه کمتر لایک داشته رو پیدا کنید
+# پست ها رو بر اساس لایک به ترتیب نزولی و بر اساس کامنت به ترتیب صعودی سورت کنید
+
 # get
 
 b = Blog.objects.get(name='Football Blog')
@@ -102,7 +125,7 @@ b.description
 # raises exception when 0 or more than 1 record found
 b = Blog.objects.get(name='Football')
 
-p = Post.objects.filter(number_of_likes=67)
+p = Post.objects.get(number_of_likes=67)
 
 
 # relation lookup
@@ -115,8 +138,24 @@ Post.objects.filter(authors__in=[Author.objects.get(name='Zahra'), Author.object
 Post.objects.filter(authors__in=[Author.objects.get(name='Zahra'), Author.objects.get(name='Mohammad')]).distinct()
 
 
-Blog.objects.filter(post__authors__name='Ali')
-Blog.objects.filter(post__authors__name='Ali').distinct()
+# tamrin:
+# تمام پست هایی که یوزری با اسم Mohammad گذاشته رو پیدا کنید.
+# یه تابع بنویسید که لیست از آیدی کاربرها رو بگیره و به ازای هر کاربر پر لایک ترین پستش رو برگردونه
+# یه تابع بنویسید که لیستی از کاربرها بگیره و ۱۰ تا پستی پر لایکی که یکی از اون کاربرها حداقل نویسنده اش بوده رو برگردونه
+# javab: Post.objects.filter(authors__in=author_list).distinct().order_by('-number_of_likes')[:10]
+# بلاگ هایی رو پیدا کنید که یوزر های با آیدی ۱ و ۲ توش پست گذاشته باشن
+# javab: Blog.objects.filter(post__authors__id__in=[1,2]).distinct()
+# بلاگ هایی رو پیدا کنید که پستی که توی تایتلش ? باشه و تعداد لایک هاش بیشتر از ۱۰ باشه نداشته باشه.
+# javab: Blog.objects.exclude(
+#     post__in=Post.objects.filter(
+#         title__contains='?',
+#         number_of_likes__gt=10,
+#     ),
+# )
+# javab ghalat: Blog.objects.exclude(
+#     post__title__contains='?',
+#     post__number_of_likes__gt=10,
+# )
 
 
 # relational fields in model --> remove, clear, set
@@ -160,10 +199,20 @@ author = Author.objects.get(name='Mohammad')
 author.post_set.all()
 # can change post_set field to what ever with 'related_name' param
 
+# tamrin
+
 # F
 from django.db.models import F
 Post.objects.filter(number_of_comments__gt=F('number_of_likes') * 2)
-Post.objects.all().order_by(-1 * (F('number_of_likes') + F('number_of_comments') + 2))
+
+# tamrin:
+# پست ها رو به ترتیب نزولی مجموع لایک و پست هاشون سورت کنید.
+# Post.objects.all().order_by(-1 * (F('number_of_likes') + F('number_of_comments')))
+# تایتل پست هایی که تایم پابلیش شدنشون بعد از تایم ادیت شدنشون هست رو پیدا کنید
+# پست هایی که مجموع تعداد کامنت ها و تعداد لایکشون بیشتر از ۱۰۰ میشه رو پیدا کنید
+# Post.objects.filter(number_of_likes__gt=100 - F('number_of_comments'))
+# پست هایی رو پیدا کنید که توی دیسکریپشن اش اسم حداقل یکی از نویسنده هاش اومده باشه
+# javab: Post.objects.filter(description__contains=F('authors__name')).distinct()
 
 # or with Q
 from django.db.models import Q
@@ -173,6 +222,10 @@ query1 = Q(number_of_likes__gt=50)
 query2 = Q(number_of_comments__gt=50)
 query = query1 & query2
 Post.objects.filter(query)
+
+# tamrin:
+# بلاگ هایی که pub_date یا mod_date شون برای آینده است رو پیدا کنید
+#
 
 # annotate (yekam advance nagim benazaram)
 
@@ -233,6 +286,8 @@ post1 is post2 # returns False. don't use this
 # update multiple
 Post.objects.filter(blog__name='Football Blog').update(number_of_likes=10)
 
+# tamrin --> تمام بلاگ های فوتبالی اگه تعداد لایک هاشون کمتر از ۱۰ بود یه دونه لایک بهشون اضافه بشه
+
 # delete
 post = Post.objects.get(title='Messi')
 post.delete()
@@ -242,7 +297,7 @@ query_set.delete()
 
 
 # یه سوال
-# ازشون بخوایم یه پست رو از دیتابیس بگیرن با get
+# ازشون بخوایم یه پست خاص رو از دیتابیس بگیرن با get
 # و تعداد لایک هاش رو یه دونه اضافه کنن و بعد هم save کنن
 
 # this code has race condition
