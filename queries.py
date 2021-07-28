@@ -224,8 +224,8 @@ query = query1 & query2
 Post.objects.filter(query)
 
 # tamrin:
-# بلاگ هایی که pub_date یا mod_date شون برای آینده است رو پیدا کنید
-#
+# پست هایی که pub_date یا mod_date شون برای آینده است رو پیدا کنید
+# پست هایی رو پیدا کنید که مجموع تعداد لایک و کامنتشون از ۵۰ بیشتر باشه یا فوتبالی باشن
 
 # annotate (yekam advance nagim benazaram)
 
@@ -286,7 +286,6 @@ post1 is post2 # returns False. don't use this
 # update multiple
 Post.objects.filter(blog__name='Football Blog').update(number_of_likes=10)
 
-# tamrin --> تمام بلاگ های فوتبالی اگه تعداد لایک هاشون کمتر از ۱۰ بود یه دونه لایک بهشون اضافه بشه
 
 # delete
 post = Post.objects.get(title='Messi')
@@ -295,6 +294,10 @@ post.delete()
 query_set = Post.objects.filter(blog__name='Football Blog')
 query_set.delete()
 
+# tamrin:
+# تمام پست های مربوط به فیلم ریتینگشون برابر ۴ ست بشه
+#  تمام پست های فوتبالی اگه تعداد لایک هاشون کمتر از ۱۰ بود یه دونه لایک بهشون اضافه بشه
+# کل پست های مربوط به یک کاربر با آیدی ۱ رو پاک کنن
 
 # یه سوال
 # ازشون بخوایم یه پست خاص رو از دیتابیس بگیرن با get
